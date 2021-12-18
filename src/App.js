@@ -20,7 +20,7 @@ const App = () =>{
                 </Grid>
             </Grid>
         </div>
-    )
+    );
 }
 
 export default App
