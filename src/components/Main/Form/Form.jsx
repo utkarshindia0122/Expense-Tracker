@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { TextField, Typography, Grid, Button, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
+import { TextField, Typography, Grid, Button, FormControl, InputLabel, Select, MenuItem,Divider} from '@material-ui/core';
 import { ExpenseTrackerContext } from '../../../context/context';
 import { v4 as uuidv4 } from 'uuid';
 import { useSpeechContext } from '@speechly/react-client';
 import formatDate from '../../../utils/formatDate';
+import InfoCard from '../../InfoCard';
 
 import useStyles from './styles';
 import { incomeCategories, expenseCategories } from '../../../constants/categories';
 import { FreeBreakfast } from '@material-ui/icons';
+import CustomizedSnackbar from '../../Snackbar/Snackbar';
 const initialState = {
     amount: '',
     category: '',
@@ -20,13 +22,15 @@ const Form = () => {
     const [formData, setFormData] = useState(initialState);
     const { addTransaction } = useContext(ExpenseTrackerContext);
     const { segment } = useSpeechContext();
+    const [open,setOpen]=useState(false);
 
     const createTransaction = () => {
 
-        if(Number.isNaN(Number(formData.amount))||!formData.date.includes('-')) return ;
+        if(Number.isNaN(Number(formData.amount))||!formData.date.includes('-')|| !(formData.amount) || !(formData.category)) return ;
 
         const transaction = { ...formData, amount: Number(formData.amount), id: uuidv4() }
 
+        setOpen(true);
         addTransaction(transaction);
         setFormData(initialState);
     }
@@ -57,7 +61,6 @@ const Form = () => {
                         else if(expenseCategories.map((iC)=> iC.type).includes(category)){
                             setFormData({...formData, type:'Expense',category})
                         }
-    
                         break;
                     case 'date':
                         setFormData({ ...formData, date: e.value });
@@ -75,10 +78,13 @@ const Form = () => {
     const selectedCategories = formData.type === 'Income' ? incomeCategories : expenseCategories;
     return (
         <Grid container spacing={2}>
+        
+            <CustomizedSnackbar open={open} setOpen={setOpen}/>
             <Grid item xs={12}>
                 <Typography align="center" variant='subtitle2' gutterBottom>
-                    {segment && segment.words.map((w) => w.value).join(" ")}
+                    {segment ? segment.words.map((w) => w.value).join(" "):<InfoCard/>}
                 </Typography>
+                <Divider />
             </Grid>
             <Grid item xs={6}>
                 <FormControl fullWidth>
