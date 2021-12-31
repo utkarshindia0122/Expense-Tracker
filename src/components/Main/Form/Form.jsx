@@ -8,7 +8,7 @@ import InfoCard from '../../InfoCard';
 
 import useStyles from './styles';
 import { incomeCategories, expenseCategories } from '../../../constants/categories';
-import { FreeBreakfast } from '@material-ui/icons';
+
 import CustomizedSnackbar from '../../Snackbar/Snackbar';
 const initialState = {
     amount: '',
